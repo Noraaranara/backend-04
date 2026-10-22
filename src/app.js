@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const userRouter = require("./routes/users");
+const bookRouter = require("./routes/books");
 const loggerOne = require("./middlewares/loggerOne");
 
 dotenv.config();
@@ -14,9 +15,11 @@ const {
 	MONGO_URL = "mongodb://127.0.0.1:27017/test",
 } = process.env;
 
-mongoose.connect(MONGO_URL).catch((error) => console.log(error));
+mongoose.connect(MONGO_URL).then(() => {
+	console.log("connected");
+}).catch((error) => console.log(error));
 
-console.log("connected");
+
 
 const app = express();
 
@@ -25,7 +28,7 @@ const helloWorld = (request, response) => {
 	response.send("Hello world!");
 };
 
-app.use(cors);
+app.use(cors());
 app.use(loggerOne);
 app.use(bodyParser.json());
 
@@ -37,6 +40,7 @@ app.post("/", (request, response) => {
 });
 
 app.use(userRouter);
+app.use(bookRouter);
 
 app.listen(PORT, () => {
 	console.log(`${API_URL}:${PORT}`);
